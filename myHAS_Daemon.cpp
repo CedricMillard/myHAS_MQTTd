@@ -17,17 +17,18 @@ void myHAS_Daemon::mqtt_message(struct mosquitto *mosq, void *obj, const struct 
 	string sPayload = (char*)msg->payload;
 
 #ifdef _DEBUG_
-	cout<<topic<<endl;
+	cout<<topic<<" : "<<sPayload<<endl;
 #endif
 
 	if(sPayload.length()>0)
 	{
-		if(topic.find("/prise/")==0)
+		if(topic.find("/prise/")!=string::npos)
 		{
 			//retrieve ID of the prise
 			string sID ="";
 			if(topic.find("/net/")==0) sID = topic.substr(11, topic.find("/", 11));
 			else sID = topic.substr(7, topic.find("/", 7));
+
 			short iID = stoi(sID);
 
 			if(topic.find("/name")!=string::npos) 
@@ -45,7 +46,7 @@ void myHAS_Daemon::mqtt_message(struct mosquitto *mosq, void *obj, const struct 
 			else if(topic.find("/blink")!=string::npos)
 				pSQLClient->updateObject("Socket", iID, "Blink", sPayload);
 		}
-		else if(topic.find("/sensor/")==0)
+		else if(topic.find("/sensor/")!=string::npos)
 		{
 			string sID ="";
 			if(topic.find("/net/")==0) sID = topic.substr(12, topic.find("/", 12));
@@ -60,7 +61,7 @@ void myHAS_Daemon::mqtt_message(struct mosquitto *mosq, void *obj, const struct 
 			else if(topic.find("/value")!=string::npos)
 				pSQLClient->updateObject("Sensor", iID, "Value", sPayload);	
 		}
-		else if(topic.find("/display/")==0)
+		else if(topic.find("/display/")!=string::npos)
 		{
 			//retrieve ID of the display
 			string sID ="";
